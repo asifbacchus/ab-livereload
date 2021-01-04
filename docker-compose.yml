@@ -1,0 +1,29 @@
+#
+# nginx with livereload
+#
+
+version: "3.7"
+
+services:
+  ab-nginx:
+    image: docker.asifbacchus.app/nginx/ab-nginx:latest
+    container_name: ab-nginx
+    restart: unless-stopped
+    volumes:
+      - ${watchDir}:/usr/share/nginx/html
+    ports:
+      - "127.0.0.1:8080:80"
+    environment:
+      - TZ=America/Edmonton
+  livereload:
+    image: docker.asifbacchus.app/livereload/livereload:latest
+    container_name: livereload
+    restart: unless-stopped
+    volumes:
+      - ${watchDir}:/var/watch
+    ports:
+      - "127.0.0.1:9999:9999"
+    environment:
+      - TZ=America/Edmonton
+
+#EOF
