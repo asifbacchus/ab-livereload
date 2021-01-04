@@ -27,7 +27,6 @@ ENV NODE_ENV=production
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
 ENV EXT="html,xml,css,scss,sass,less,js,jsx,ts,tsx,php,py"
-ENV EEXT=""
 ENV EXCLUDE=".git/,.svn/"
 ENV DELAY=500
 
@@ -38,7 +37,7 @@ RUN npm install livereload
 
 # run node via tini by default
 ENTRYPOINT [ "/sbin/tini", "--" ]
-CMD [ "node", "livereload", "--port 9999", "--debug", "--exts $EXT", "--extraExts $EEXT", "--exclusions $EXCLUDE", "--wait $DELAY" ]
+CMD [ "node", "node_modules/livereload/bin/livereload.js", "/var/watch" "--port 9999", "--debug", "--exts $EXT", "--exclusions $EXCLUDE", "-u true", "--wait $DELAY" ]
 
 # set build timestamp and version labels
 ARG BUILD_DATE
