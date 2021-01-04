@@ -19,7 +19,7 @@ RUN apk --update --no-cache add tzdata tini
 VOLUME [ "/var/watch" ]
 
 # expose port
-EXPOSE 9999
+EXPOSE 35729
 
 # default environment variables
 ENV TZ=Etc/UTC
@@ -37,7 +37,7 @@ RUN npm install livereload
 
 # run node via tini by default
 ENTRYPOINT [ "/sbin/tini", "--" ]
-CMD [ "node", "node_modules/livereload/bin/livereload.js", "/var/watch" "--port 9999", "--debug", "--exts $EXT", "--exclusions $EXCLUDE", "-u true", "--wait $DELAY" ]
+CMD node node_modules/livereload/bin/livereload.js /var/watch --debug --exts $EXT --exclusions $EXCLUDE -u true --wait $DELAY
 
 # set build timestamp and version labels
 ARG BUILD_DATE
