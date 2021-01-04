@@ -12,12 +12,8 @@ RUN deluser --remove-home node \
     && addgroup -g ${NODE_UID} -S node \
     && adduser -G node -S -u ${NODE_UID} node
 
-# add tini, timezone support and install livereload
-WORKDIR /usr/local/livereload
-RUN apk --update --no-cache add \
-    tzdata \
-    tini \
-    && npm install livereload
+# add tini, timezone support
+RUN apk --update --no-cache add tzdata tini
 
 # create default volume in case user forgets to map one
 VOLUME [ "/var/watch" ]
@@ -35,11 +31,14 @@ ENV EEXT=""
 ENV EXCLUDE=".git/,.svn/"
 ENV DELAY=500
 
+# install livereload for node user
+USER node
+WORKDIR /home/node
+RUN npm install livereload
 
 # run node via tini by default
-USER node
 ENTRYPOINT [ "/sbin/tini", "--" ]
-CMD [ "livereload", "--port 9999", "--debug", "--exts $EXT", "--extraExts $EEXT", "--exclusions $EXCLUDE", "--wait $DELAY" ]
+CMD [ "node", "livereload", "--port 9999", "--debug", "--exts $EXT", "--extraExts $EEXT", "--exclusions $EXCLUDE", "--wait $DELAY" ]
 
 # set build timestamp and version labels
 ARG BUILD_DATE
