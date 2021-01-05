@@ -2,12 +2,12 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/modules.xml
-/contentModel.xml
-/.idea.webdev.iml
 /projectSettingsUpdater.xml
+/modules.xml
+/.idea.livereload.iml
+/contentModel.xml
 # Datasource local storage ignored files
-/../../../../../../../../../:\Users\AsifB\Documents\RiderProjects\webdev\.idea\.idea.webdev.dir\.idea/dataSources/
+/../../../../../../../../../:\Users\AsifB\Documents\RiderProjects\livereload\.idea\.idea.livereload.dir\.idea/dataSources/
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
