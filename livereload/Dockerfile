@@ -43,11 +43,11 @@ ENV DELAY=500
 # install livereload for node user
 USER node
 WORKDIR /home/node
-RUN npm install livereload
+RUN npm install -g livereload
 
 # run node via tini by default
 ENTRYPOINT [ "/sbin/tini", "--" ]
-CMD node node_modules/livereload/bin/livereload.js /var/watch --debug --exts $EXT --exclusions $EXCLUDE -u true --wait $DELAY
+CMD livereload /var/watch --debug --exts $EXT --exclusions $EXCLUDE -u true --wait $DELAY
 
 # set build timestamp and version labels
 ARG BUILD_DATE
