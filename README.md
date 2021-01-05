@@ -41,7 +41,7 @@ Obviously, this container needs something to monitor to determine whether change
 ## Example run commands
 
 ```bash
-docker run --name livereload --restart unless-stopped \
+docker run -d --name livereload --restart unless-stopped \
   -v /home/user/Documents/myWebPage:/var/watch \
   -p 35729:35729 \
   asifbacchus/livereload:latest
@@ -54,7 +54,7 @@ The above command will run the container with a name of *livereload*, restarting
 Say you want to only monitor html and css files and you want to ignore anything going on in your 'oldversion' folder. You can set environment variables as follows:
 
 ```bash
-docker run --name livereload --restart unless-stopped \
+docker run -d --name livereload --restart unless-stopped \
   -v /home/user/Documents/myWebPage:/var/watch \
   -p 35729:35729 \
   -e EXT="html,css" \
@@ -65,7 +65,7 @@ docker run --name livereload --restart unless-stopped \
 If you wanted a longer polling period, run as follows:
 
 ```bash
-docker run --name livereload --restart unless-stopped \
+docker run -d --name livereload --restart unless-stopped \
   -v /home/user/Documents/myWebPage:/var/watch \
   -p 35729:35729 \
   -e DELAY=3000 \
