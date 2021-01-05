@@ -51,6 +51,6 @@ CMD livereload /var/watch --debug --exts $EXT --exclusions $EXCLUDE -u true --wa
 
 # set build timestamp and version labels
 ARG BUILD_DATE
-LABEL org.label-schema.version="0.5"
+LABEL org.label-schema.version="1.0"
 LABEL org.label-schema.build-date=${BUILD_DATE}
 #EOF
