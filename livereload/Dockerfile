@@ -43,7 +43,8 @@ ENV DELAY=500
 # install livereload for node user
 USER node
 WORKDIR /home/node
-RUN npm install -g livereload
+RUN mkdir -p .npm-global/bin .npm-global/lib \
+    && npm install -g livereload
 
 # run node via tini by default
 ENTRYPOINT [ "/sbin/tini", "--" ]
