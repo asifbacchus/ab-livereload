@@ -36,7 +36,7 @@ ENV TZ=Etc/UTC
 ENV NODE_ENV=production
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
-ENV EXT="html,xml,css,scss,sass,less,js,jsx,ts,tsx,php,py"
+ENV EXT="html,xml,css,js,jsx,ts,tsx,php,py"
 ENV EXCLUDE=".git/,.svn/"
 ENV DELAY=500
 
