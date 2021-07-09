@@ -72,6 +72,9 @@
 *.tgz      binary
 *.zip      binary
 
+# Docker build files
+Dockerfile  text eol=lf
+
 # Text files where line endings should be preserved
 *.patch    -text
 
