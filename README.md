@@ -17,11 +17,11 @@ Containerized implementation of [npm livereload](https://www.npmjs.com/package/l
 
 ## Private docker repository
 
-If you prefer, you can also use my private repository to download possibly newer containers and/or signed containers. I sign all major release tags (e.g. '1', '2', etc.) and 'latest.' Simply change `asifbacchus/livereload:tag` to `docker.asifbacchus.app/livereload/livereload:tag`.
+If you prefer, you can also use my private repository to download possibly newer containers. Simply change `asifbacchus/livereload:tag` to `docker.asifbacchus.dev/livereload/livereload:tag`.
 
 ## Source/Issues
 
-If you want the Dockerfile or if you want to bring an issue/request to my attention, please head to either my private [git server (preferred)](https://git.asifbacchus.app/ab-docker/livereload) or [github](https://github.com/asifbacchus/livereload).
+If you want the Dockerfile or if you want to bring an issue/request to my attention, please head to either my private [git server (preferred)](https://git.asifbacchus.dev/ab-docker/livereload) or [github](https://github.com/asifbacchus/livereload).
 
 ## Environment variables
 
