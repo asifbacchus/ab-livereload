@@ -3,7 +3,7 @@
 #
 
 # allow dynamic build by specifying base image as build arg
-ARG NODE_TAG="16-alpine3.13"
+ARG NODE_TAG="16.4.2-alpine3.14"
 FROM node:${NODE_TAG}
 
 # change user id of node user
@@ -16,12 +16,12 @@ RUN deluser --remove-home node \
 RUN apk --update --no-cache add tzdata tini
 
 # labels
-LABEL org.opencontainers.image.authors="Asif Bacchus <asif@bacchus.cloud>"
+LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
 LABEL org.opencontainers.image.title="livereload npm"
 LABEL org.opencontainers.image.description="Dockerized npm livereload running under limited user account. Environment variables allow specifying files to watch/exclude and notification delay."
-LABEL org.opencontainers.image.url="https://git.asifbacchus.app/ab-docker/livereload"
-LABEL org.opencontainers.image.documentation="https://git.asifbacchus.app/ab-docker/livereload/raw/branch/master/README.md"
-LABEL org.opencontainers.image.source="https://git.asifbacchus.app/ab-docker/livereload.git"
+LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/livereload"
+LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/livereload/raw/branch/master/README.md"
+LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/livereload.git"
 
 # create default volume in case user forgets to map one
 VOLUME [ "/var/watch" ]
@@ -50,7 +50,9 @@ CMD livereload /var/watch --debug --exts $EXT --exclusions $EXCLUDE -u true --wa
 
 # set build timestamp and version labels
 ARG BUILD_DATE
-LABEL org.opencontainers.image.version="1.1"
-LABEL org.opencontainers.image.vendor="nodeJS v16.3.0"
+LABEL org.opencontainers.image.version="16.4.2"
+LABEL org.opencontainers.image.vendor="nodeJS"
+LABEL dev.asifbacchus.image.name="livereload npm"
+LABEL dev.asifbacchus.image.version="1.2"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 #EOF
