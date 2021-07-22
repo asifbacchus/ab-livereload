@@ -42,17 +42,20 @@ ENV LR_EXTS="html,xml,css,js,jsx,ts,tsx,php,py"
 ENV LR_EXCLUDE=".git/,.svn/,.vscode/,.idea/"
 ENV LR_DELAY=500
 
-# install livereload npm and copy server script
+# copy scripts, cleanup permissions and install livereload npm
+COPY [ "livereload.js", "/home/node/livereload.js" ]
+COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
+RUN chown node:node /home/node/livereload.js \
+    chmod 644 /home/node/livereload.js \
+    chmod 755 /usr/local/bin/entrypoint.sh
 USER node
 WORKDIR /home/node
 RUN mkdir -p .npm-global/bin .npm-global/lib \
     && npm config set fund false \
     && npm config set update-notifier false \
     && npm install livereload --save
-COPY [ "livereload.js", "livereload.js" ]
-COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
 
-# run server via tini by default
+# run entrypoint script by default
 ENTRYPOINT [ "/sbin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
 
 # set build timestamp and version labels
