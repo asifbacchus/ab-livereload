@@ -20,8 +20,8 @@ RUN apk --update --no-cache add \
     tini \
     tzdata \
     openssl \
-    && chown node:node /certs \
-    && chmod 700 certs \
+    && chown node:node /var/certs \
+    && chmod 700 /var/certs \
     && chmod +r /var/watch
 
 # labels
@@ -46,8 +46,8 @@ ENV LR_DELAY=500
 COPY [ "livereload.js", "/home/node/livereload.js" ]
 COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
 RUN chown node:node /home/node/livereload.js \
-    chmod 644 /home/node/livereload.js \
-    chmod 755 /usr/local/bin/entrypoint.sh
+    && chmod 644 /home/node/livereload.js \
+    && chmod 755 /usr/local/bin/entrypoint.sh
 USER node
 WORKDIR /home/node
 RUN mkdir -p .npm-global/bin .npm-global/lib \
