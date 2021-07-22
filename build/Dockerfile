@@ -19,6 +19,7 @@ EXPOSE 35729
 RUN apk --update --no-cache add \
     tini \
     tzdata \
+    openssl \
     && chown node:node /certs \
     && chmod 700 certs \
     && chmod +r /var/watch
