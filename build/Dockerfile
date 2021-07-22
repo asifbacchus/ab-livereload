@@ -11,13 +11,17 @@ RUN deluser --remove-home node \
     && addgroup -g ${NODE_UID} -S node \
     && adduser -G node -S -u ${NODE_UID} node
 
+# create default volumes in-case user forgets, expose default port
+VOLUME [ "/var/watch", "/var/certs" ]
+EXPOSE 35729
+
 # add tini, timezone support and create certificate directories
 RUN apk --update --no-cache add \
     tini \
     tzdata \
-    && mkdir /certs \
     && chown node:node /certs \
-    && chmod 700 certs
+    && chmod 700 certs \
+    && chmod +r /var/watch
 
 # labels
 LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
@@ -26,10 +30,6 @@ LABEL org.opencontainers.image.description="Dockerized npm livereload supporting
 LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/livereload"
 LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/livereload/raw/branch/master/README.md"
 LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/livereload.git"
-
-# create default volume in-case user forgets, expose default port
-VOLUME [ "/var/watch" ]
-EXPOSE 35729
 
 # default environment variables
 ENV NODE_ENV=production
@@ -49,10 +49,10 @@ RUN mkdir -p .npm-global/bin .npm-global/lib \
     && npm config set update-notifier false \
     && npm install livereload --save
 COPY [ "livereload.js", "livereload.js" ]
+COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
 
 # run server via tini by default
-ENTRYPOINT [ "/sbin/tini", "--" ]
-CMD [ "node", "livereload.js" ]
+ENTRYPOINT [ "/sbin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
 
 # set build timestamp and version labels
 ARG BUILD_DATE
