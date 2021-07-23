@@ -39,6 +39,7 @@ ENV LR_EXTS="html,xml,css,js,jsx,ts,tsx,php,py"
 ENV LR_EXCLUDE=".git/,.svn/,.vscode/,.idea/"
 ENV LR_DELAY=500
 ENV LR_DEBUG=true
+ENV LR_HTTPS=true
 
 # install livereload npm as node user then switch back to root user
 USER node

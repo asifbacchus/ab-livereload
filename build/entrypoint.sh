@@ -6,19 +6,34 @@
 
 # functions
 certificateGenerateNew() {
+    certificateCheckEnabled
     printf "\nGenerating new self-signed certificate:\n"
     printf "Exporting new certificate:\n"
     exit 0
 }
 
 certificateShow() {
+    certificateCheckEnabled
     printf "\nCurrently loaded certificate:\n"
     exit 0
 }
 
 certificateExport() {
+    certificateCheckEnabled
     printf "\nExporting currently loaded certificate:\n"
     exit 0
+}
+
+certificateCheckEnabled() {
+    httpsEnabled="$(convertCaseUpper "$LR_HTTPS")"
+    if [ "$httpsEnabled" != "TRUE" ]; then
+        printf "\nSSL/TLS not enabled. Please set LR_HTTPS=TRUE if you want to enable SSL/TLS.\n"
+        exit 1
+    fi
+}
+
+convertCaseUpper() {
+    printf "%s" "$1" | tr "[:lower:]" "[:upper:]"
 }
 
 # default variable values
