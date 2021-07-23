@@ -59,12 +59,13 @@ RUN mkdir -p .npm-global/bin .npm-global/lib \
 ENTRYPOINT [ "/sbin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
 
 # set build timestamp and version labels
-ARG INTERNAL_VERSION
-ARG BUILD_DATE
-LABEL org.opencontainers.image.version="16.5.0, 0.9.3"
-LABEL org.opencontainers.image.vendor="NODE.js, node-livereload"
-LABEL dev.asifbacchus.image.name="livereload-tls-npm"
-LABEL dev.asifbacchus.image.version=${INTERNAL_VERSION}
-LABEL org.opencontainers.image.created=${BUILD_DATE}
+# TODO: uncomment when done testing
+#ARG INTERNAL_VERSION
+#ARG BUILD_DATE
+#LABEL org.opencontainers.image.version="16.5.0, 0.9.3"
+#LABEL org.opencontainers.image.vendor="NODE.js, node-livereload"
+#LABEL dev.asifbacchus.image.name="livereload-tls-npm"
+#LABEL dev.asifbacchus.image.version=${INTERNAL_VERSION}
+#LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
