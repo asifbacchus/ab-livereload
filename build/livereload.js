@@ -20,6 +20,6 @@ const options = {
 
 // start server
 let server = livereload.createServer(options);
-server.watch('/var/watch')
+server.watch('/watch')
 
 //#EOF
