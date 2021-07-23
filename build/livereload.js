@@ -15,7 +15,8 @@ const options = {
     exts: process.env.LR_EXTS,
     exclusions: process.env.LR_EXCLUDE,
     usePolling: true,
-    delay: process.env.LR_DELAY
+    delay: process.env.LR_DELAY,
+    debug: process.env.LR_DEBUG
 };
 
 // start server
