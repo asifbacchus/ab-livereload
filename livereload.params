@@ -1,0 +1,96 @@
+#
+# Parameters for LiveReload stack:
+#   This file makes it easier to customize your LiveReload stack deployment by providing centralized configuration options.
+#   This file is *not required* since all values have (sane) default settings.
+#   There is *no* sensitive information in this file.
+
+
+#
+# COMMON PARAMETERS
+
+# TZ:
+# Timezone used in logs and console messages. No effect on operation, purely aesthetic.
+# REQUIRED: NO
+# DEFAULT: Etc/UTC
+# VALID OPTIONS: Any valid IANA TZ formatted timezone. Refer to https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+#TZ=Etc/UTC
+
+# GID:
+# You may wish to change the GroupID of the container's user. This allows it access certain resources on the host like certificates or files.
+# REQUIRED: NO
+# DEFAULT:
+# VALID OPTIONS: Any valid UID/GID
+#GID=
+
+# WATCHDIR:
+# Directory containing files you want to monitor for changes and trigger a browser reload.
+# REQUIRED: NO
+# DEFAULT:
+# VALID OPTIONS: Any valid directory on the host
+#WATCHDIR=
+
+#
+# AB-NGINX parameters
+#    refer to https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki for more details
+
+# SERVER_NAMES:
+# Space-delimited list of names to which the server should respond. This needs to match any certificates being used.
+# REQUIRED: NO
+# DEFAULT: _
+# VALID OPTIONS: Any valid hostnames for your environment
+#SERVER_NAMES=_
+
+# TLS13_ONLY:
+# Use and accept only TLS version 1.3 connections. If false, both TLS versions 1.2 and 1.3 will be accepted.
+# REQUIRED: NO
+# DEFAULT: TRUE
+# VALID OPTIONS: TRUE, FALSE
+#TLS13_ONLY=TRUE
+
+
+#
+# LiveReload parameters
+
+# LR_PORT:
+# Port on which the server should listen. Virtually all clients expect the default setting.
+# REQUIRED: NO
+# DEFAULT: 35729
+# VALID OPTIONS: Any valid TCP port number that does not conflict within your environment
+#LR_PORT=35729
+
+# LR_EXTS:
+# Comma-delimited list of extensions to watch for changes and trigger a browser reload. This list *must* be quoted.
+# REQUIRED: NO
+# DEFAULT: "html,xml,css,js,jsx,ts,tsx,php,py"
+# VALID OPTIONS: Any valid file extension(s)
+#LR_EXTS="html,xml,css,js,jsx,ts,tsx,php,py"
+
+# LR_EXCLUDE:
+# Comma-delimited list of files/directories to exclude from monitoring. This list *must* be quoted.
+# REQUIRED: NO
+# DEFAULT: ".git/,.svn/,.vscode/,.idea/"
+# VALID OPTIONS: Any valid files or directories/
+#LR_EXCLUDE=".git/,.svn/,.vscode/,.idea/"
+
+# LR_DELAY:
+# Amount of time in milliseconds before detecting a change and sending a trigger for a browser reload. Useful if you need to allow time for background recompilation, etc.
+# REQUIRED: NO
+# DEFAULT: 500
+# VALID OPTIONS: Any integer representing a number of milliseconds (ms)
+#LR_DELAY=500
+
+# LR_DEBUG:
+# Whether or not to print diagnostic debugging messages about the server's operation. Usually a good idea to leave this set to 'true'.
+# REQUIRED: NO
+# DEFAULT: true
+# VALID OPTIONS: true, false
+#LR_DEBUG=true
+
+# LR_HTTPS:
+# Whether or not to enable SSL/TLS on the server's listening port. This may be required depending on your domain and environment configuration.
+# REQUIRED: NO
+# DEFAULT: true
+# VALID OPTIONS: true, false
+#LR_HTTPS=true
+
+#EOF

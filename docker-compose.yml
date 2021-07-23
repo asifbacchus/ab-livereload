@@ -1,0 +1,32 @@
+#
+# LiveReload stack
+#
+
+version: '2.4'
+
+services:
+  ab-nginx:
+    image: docker.asifbacchus.dev/nginx/ab-nginx:latest
+    container_name: ab-nginx
+    volumes:
+    - ./certs/certs:ro
+    - ${WATCHDIR}:/usr/share/nginx/html:ro
+    - ./nginx/config:/etc/nginx/config:ro
+    ports:
+    - "8080:80"
+    - "8443:443"
+    env_file: livereload.params
+    user: "8080:${GID:-8080}"
+  livereload:
+    image: livereload:tls
+    container_name: livereload
+    volumes:
+    - ./certs:certs:ro
+    - ${WATCHDIR}:/watch:ro
+    ports:
+    - "35729:35729"
+    env_file: livereload.params
+    user: "9999:${GID:-9999}"
+    command: listen
+
+#EOF
