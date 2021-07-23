@@ -33,8 +33,9 @@ case "$1" in
 listen | server | run | start)
     doServer=1
     ;;
-shell) ;;
-
+shell)
+    doShell=1
+    ;;
 new-cert)
     doCertNew=1
     ;;
@@ -47,20 +48,27 @@ export-cert)
 *)
     # invalid or unknown option
     printf "\nUnknown action requested: %s\n" "$1"
-    printf "Valid actions: [listen | server | run | start] | shell | new-cert | show-cert | export-cert"
+    printf "Valid actions: [listen | server | run | start] | shell | new-cert | show-cert | export-cert\n\n"
     exit 1
     ;;
 esac
 
 # action: run server
 if [ "$doServer" -eq 1 ]; then
-    exec "node livereload.js"
+    exec node livereload.js
     exit "$?"
 fi
 
 # action: drop to shell
 if [ "$doShell" -eq 1 ]; then
-    exec /bin/sh "$@"
+    if [ -z "$2" ]; then
+        printf "\nExecuting interactive shell:\n"
+        exec /bin/sh
+    else
+        shift
+        printf "\nExecuting shell: '%s'\n" "$*"
+        exec /bin/sh -c "$*"
+    fi
     exit "$?"
 fi
 
