@@ -93,4 +93,12 @@
 # VALID OPTIONS: true, false
 #LR_HTTPS=true
 
+# CERT_HOSTNAME:
+# Hostname to use if container is auto-generating a self-signed certificate.
+# REQUIRED: NO
+# DEFAULT: $HOSTNAME
+# VALID OPTIONS: Any valid hostname
+#CERT_HOSTNAME=$HOSTNAME
+
+
 #EOF

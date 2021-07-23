@@ -5,11 +5,14 @@ ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.14
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-# create new node user with set id from build-arg
+# create new node user with set id from build-arg and create volume directories
 ARG NODE_UID=9999
 RUN deluser --remove-home node \
     && addgroup -g ${NODE_UID} -S node \
-    && adduser -G node -S -u ${NODE_UID} node
+    && adduser -G node -S -u ${NODE_UID} node \
+    && mkdir /watch /certs \
+    && chown root:node /certs \
+    && chmod 770 /certs
 
 # create default volumes in-case user forgets, expose default port
 VOLUME [ "/watch", "/certs" ]
@@ -40,6 +43,7 @@ ENV LR_EXCLUDE=".git/,.svn/,.vscode/,.idea/"
 ENV LR_DELAY=500
 ENV LR_DEBUG=true
 ENV LR_HTTPS=true
+ENV CERT_HOSTNAME=""
 
 # install livereload npm as node user then switch back to root user
 USER node
@@ -51,11 +55,13 @@ RUN mkdir -p .npm-global/bin .npm-global/lib \
 
 # copy scripts and fix-up all permissions
 USER root
+COPY [ "selfsigned.cnf", "/etc/selfsigned.cnf" ]
 COPY [ "livereload.js", "/home/node/livereload.js" ]
 COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
 RUN chown node:node /home/node/livereload.js \
     && chmod 644 /home/node/livereload.js \
-    && chmod 755 /usr/local/bin/entrypoint.sh
+    && chmod 755 /usr/local/bin/entrypoint.sh \
+    && chmod 644 /etc/selfsigned.cnf
 
 # switch to node user, run entrypoint script by default
 USER node
