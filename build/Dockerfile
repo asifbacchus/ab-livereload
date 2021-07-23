@@ -12,17 +12,14 @@ RUN deluser --remove-home node \
     && adduser -G node -S -u ${NODE_UID} node
 
 # create default volumes in-case user forgets, expose default port
-VOLUME [ "/var/watch", "/var/certs" ]
+VOLUME [ "/watch", "/certs" ]
 EXPOSE 35729
 
 # add tini, timezone support and create certificate directories
 RUN apk --update --no-cache add \
     tini \
     tzdata \
-    openssl \
-    && chown node:node /var/certs \
-    && chmod 700 /var/certs \
-    && chmod +r /var/watch
+    openssl
 
 # labels
 LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
@@ -42,12 +39,7 @@ ENV LR_EXTS="html,xml,css,js,jsx,ts,tsx,php,py"
 ENV LR_EXCLUDE=".git/,.svn/,.vscode/,.idea/"
 ENV LR_DELAY=500
 
-# copy scripts, cleanup permissions and install livereload npm
-COPY [ "livereload.js", "/home/node/livereload.js" ]
-COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
-RUN chown node:node /home/node/livereload.js \
-    && chmod 644 /home/node/livereload.js \
-    && chmod 755 /usr/local/bin/entrypoint.sh
+# install livereload npm as node user then switch back to root user
 USER node
 WORKDIR /home/node
 RUN mkdir -p .npm-global/bin .npm-global/lib \
@@ -55,7 +47,17 @@ RUN mkdir -p .npm-global/bin .npm-global/lib \
     && npm config set update-notifier false \
     && npm install livereload --save
 
-# run entrypoint script by default
+# copy scripts and fix-up all permissions
+USER root
+COPY [ "livereload.js", "/home/node/livereload.js" ]
+COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
+RUN chown node:node /home/node/livereload.js \
+    && chmod 644 /home/node/livereload.js \
+    && chmod 755 /usr/local/bin/entrypoint.sh
+
+# switch to node user, run entrypoint script by default
+USER node
+WORKDIR /home/node
 ENTRYPOINT [ "/sbin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
 
 # set build timestamp and version labels
