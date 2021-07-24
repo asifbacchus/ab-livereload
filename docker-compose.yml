@@ -13,9 +13,12 @@ services:
     - ${WATCHDIR}:/usr/share/nginx/html:ro
     - ./nginx/config:/etc/nginx/config:ro
     ports:
-    - "8080:80"
-    - "8443:443"
-    env_file: livereload.params
+    - "${NGINX_HTTP:-80}:80"
+    - "${NGINX_HTTPS:-443}:443"
+    environment:
+      - TZ=${TZ}
+      - SERVER_NAMES=${SERVER_NAMES}
+      - TLS13_ONLY=${TLS13_ONLY}
     user: "8080:${GID:-8080}"
   livereload:
     image: docker.asifbacchus.dev/livereload/livereload:latest
@@ -24,8 +27,16 @@ services:
     - ./certs:certs:ro
     - ${WATCHDIR}:/watch:ro
     ports:
-    - "35729:35729"
-    env_file: livereload.params
+    - "${LR_PORT:-35729}:${LR_PORT:-35729}"
+    environment:
+      - TZ=${TZ}
+      - LR_PORT=${LR_PORT}
+      - LR_EXTS=${LR_EXTS}
+      - LR_EXCLUDE=${LR_EXCLUDE}
+      - LR_DELAY=${LR_DELAY}
+      - LR_DEBUG=${LR_DEBUG}
+      - LR_HTTPS=${LR_HTTPS}
+      - CERT_HOSTNAME=${CERT_HOSTNAME}
     user: "9999:${GID:-9999}"
     command: listen
 
