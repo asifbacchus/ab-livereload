@@ -5,29 +5,16 @@
 version: '2.4'
 
 services:
-  ab-nginx:
-    image: docker.asifbacchus.dev/nginx/ab-nginx:latest
-    container_name: ab-nginx
-    volumes:
-    - ./certs/certs:ro
-    - ${WATCHDIR}:/usr/share/nginx/html:ro
-    - ./nginx/config:/etc/nginx/config:ro
-    ports:
-    - "${NGINX_HTTP:-80}:80"
-    - "${NGINX_HTTPS:-443}:443"
-    environment:
-      - TZ=${TZ}
-      - SERVER_NAMES=${SERVER_NAMES}
-      - TLS13_ONLY=${TLS13_ONLY}
-    user: "8080:${GID:-8080}"
   livereload:
     image: docker.asifbacchus.dev/livereload/livereload:latest
     container_name: livereload
     volumes:
-    - ./certs:certs
-    - ${WATCHDIR}:/watch:ro
+      - ./certs:certs
+      - ${WATCHDIR}:/watch:ro
+    networks:
+      - network
     ports:
-    - "${LR_PORT:-35729}:${LR_PORT:-35729}"
+      - "${LR_PORT:-35729}:${LR_PORT:-35729}"
     environment:
       - TZ=${TZ}
       - LR_PORT=${LR_PORT}
@@ -39,5 +26,29 @@ services:
       - CERT_HOSTNAME=${CERT_HOSTNAME}
     user: "9999:${GID:-9999}"
     command: listen
+  ab-nginx:
+    image: docker.asifbacchus.dev/nginx/ab-nginx:latest
+    container_name: ab-nginx
+    depends_on:
+      livereload:
+        condition: service_healthy
+    volumes:
+      - ./certs/certs:ro
+      - ${WATCHDIR}:/usr/share/nginx/html:ro
+      - ./nginx/config:/etc/nginx/config:ro
+    networks:
+      - network
+    ports:
+      - "${NGINX_HTTP:-80}:80"
+      - "${NGINX_HTTPS:-443}:443"
+    environment:
+      - TZ=${TZ}
+      - SERVER_NAMES=${SERVER_NAMES}
+      - TLS13_ONLY=${TLS13_ONLY}
+    user: "8080:${GID:-8080}"
+
+networks:
+  network:
+    external: false
 
 #EOF
