@@ -35,7 +35,24 @@ certificateGenerateNew() {
 
 certificateShow() {
     printf "\nCurrently loaded certificate:\n"
-    exit 0
+    certStatus="$(certificateCheckExist)"
+    case "$certStatus" in
+    noexist)
+        printf "[ERROR]: No certificate is loaded (certificate directory empty).\n\n"
+        exit 51
+        ;;
+    noread_certificate)
+        printf "[ERROR]: Cannot read loaded certificate.\n\n"
+        exit 52
+        ;;
+    noread_key)
+        printf "\n[WARNING]: Cannot find private key associated with certificate!\n\n"
+        ;;
+    esac
+    if ! openssl x509 -noout -text -nameopt align,multiline -certopt no_pubkey,no_sigdump -in /certs/fullchain.pem; then
+        printf "\n[ERROR]: Unable to display loaded certificate.\n\n"
+        exit 52
+    fi
 }
 
 convertCaseLower() {
@@ -92,12 +109,12 @@ if [ "$doServer" -eq 1 ]; then
             noread_certificate)
                 printf "[Checking mounted certificate]"
                 printf "\nERROR: SSL/TLS mode selected but unable to read certificate!\n\n"
-                exit 51
+                exit 52
                 ;;
             noread_key)
                 printf "[Checking mounted certificate]"
                 printf "\nERROR: SSL/TLS mode selected but unable to read private key!\n\n"
-                exit 52
+                exit 53
                 ;;
             ok)
                 printf "[Certificate OK]\n"
@@ -128,7 +145,10 @@ if [ "$doCertNew" -eq 1 ]; then
 fi
 
 # action: show loaded certificate
-if [ "$doCertShow" -eq 1 ]; then certificateShow; fi
+if [ "$doCertShow" -eq 1 ]; then
+    certificateShow
+    exit 0
+fi
 
 # failsafe exit - terminate with code 99: this code should never be executed!
 exit 99
@@ -138,8 +158,9 @@ exit 99
 # 1:   invalid or invalid parameter passed to script
 # 2:   interactive shell required
 # 50:  certificate errors
-# 51:    unable to read certificate/chain
-# 52:    unable to read private key
+# 51:    certificate directory empty
+# 52:    unable to read certificate/chain
+# 53:    unable to read private key
 # 55:    unable to generate new certificate
 # 99:  code error
 
