@@ -11,14 +11,18 @@ const options = {
     exclusions: process.env.LR_EXCLUDE,
     usePolling: true,
     delay: process.env.LR_DELAY,
-    debug: process.env.LR_DEBUG
 };
 
-if (process.env.LR_HTTPS) {
+// set debugging output as per LR_DEBUG
+if (process.env.LR_DEBUG === "true") {
+    options.debug = true
+}
+
+// set HTTPS as per LR_HTTPS
+if (process.env.LR_HTTPS === "true") {
     options.https = {
         cert: fs.readFileSync('/certs/fullchain.pem'),
         key: fs.readFileSync('/certs/privkey.pem')
-
     };
 }
 
