@@ -120,6 +120,8 @@ if [ "$doServer" -eq 1 ]; then
                 printf "[Certificate OK]\n"
                 ;;
         esac
+    else
+        printf "[HTTP mode enabled]\n"
     fi
     exec node livereload.js
     exit "$?"
