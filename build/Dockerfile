@@ -5,10 +5,11 @@ ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.14
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-# create new node user with set id from build-arg and create volume directories
+# create new node user with set UID and GID from build-args and create volume directories
 ARG NODE_UID=9999
+ARG NODE_GID=9999
 RUN deluser --remove-home node \
-    && addgroup -g ${NODE_UID} -S node \
+    && addgroup -g ${NODE_GID} -S node \
     && adduser -G node -S -u ${NODE_UID} node \
     && mkdir /watch /certs \
     && chown root:node /certs \
