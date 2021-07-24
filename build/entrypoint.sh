@@ -5,13 +5,6 @@
 #
 
 # functions
-certificateCheckEnabled() {
-    if [ "$httpsEnabled" != "TRUE" ]; then
-        printf "\nSSL/TLS not enabled. Please set LR_HTTPS=TRUE if you want to enable SSL/TLS.\n"
-        exit 1
-    fi
-}
-
 certificateCheckExist() {
     if [ -n "$(find /certs/ -type d -empty -print)" ]; then
         printf "noexist"
@@ -41,13 +34,12 @@ certificateGenerateNew() {
 }
 
 certificateShow() {
-    certificateCheckEnabled
     printf "\nCurrently loaded certificate:\n"
     exit 0
 }
 
-convertCaseUpper() {
-    printf "%s" "$1" | tr "[:lower:]" "[:upper:]"
+convertCaseLower() {
+    printf "%s" "$1" | tr "[:upper:]" "[:lower:]"
 }
 
 # default variable values
@@ -55,7 +47,12 @@ doCertNew=0
 doCertShow=0
 doServer=0
 doShell=0
-httpsEnabled="$(convertCaseUpper "$LR_HTTPS")"
+
+# clean-up boolean environment variables for this script and JavaScript
+enableHTTPS="$(convertCaseLower "$LR_HTTPS")"
+enableDebug="$(convertCaseLower "$LR_DEBUG")"
+export LR_HTTPS="$enableHTTPS"
+export LR_DEBUG="$enableDebug"
 
 # process action parameter
 case "$1" in
@@ -84,7 +81,7 @@ if [ "$doServer" -eq 1 ]; then
     printf "Starting LiveReload server:\n"
 
     # https pre-flight check
-    if [ "$httpsEnabled" = "TRUE" ]; then
+    if [ "$enableHTTPS" = "true" ]; then
         printf "[SSL/TLS mode enabled]\n"
         certStatus="$(certificateCheckExist)"
         case "$certStatus" in
