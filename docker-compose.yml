@@ -18,7 +18,7 @@ services:
     env_file: livereload.params
     user: "8080:${GID:-8080}"
   livereload:
-    image: livereload:tls
+    image: docker.asifbacchus.dev/livereload/livereload:latest
     container_name: livereload
     volumes:
     - ./certs:certs:ro
