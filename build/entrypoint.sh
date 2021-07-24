@@ -99,7 +99,6 @@ if [ "$doServer" -eq 1 ]; then
 
     # https pre-flight check
     if [ "$enableHTTPS" = "true" ]; then
-        printf "[SSL/TLS mode enabled]\n"
         certStatus="$(certificateCheckExist)"
         case "$certStatus" in
             noexist)
@@ -120,8 +119,6 @@ if [ "$doServer" -eq 1 ]; then
                 printf "[Certificate OK]\n"
                 ;;
         esac
-    else
-        printf "[HTTP mode enabled]\n"
     fi
     exec node livereload.js
     exit "$?"

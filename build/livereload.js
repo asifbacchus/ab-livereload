@@ -16,6 +16,7 @@ const options = {
 // set debugging output as per LR_DEBUG
 if (process.env.LR_DEBUG === "true") {
     options.debug = true
+    console.log("[Debug output ENABLED]");
 }
 
 // set HTTPS as per LR_HTTPS
@@ -24,6 +25,10 @@ if (process.env.LR_HTTPS === "true") {
         cert: fs.readFileSync('/certs/fullchain.pem'),
         key: fs.readFileSync('/certs/privkey.pem')
     };
+    console.log("[HTTPS mode]");
+}
+else {
+    console.log("[HTTP mode]");
 }
 
 // start server
