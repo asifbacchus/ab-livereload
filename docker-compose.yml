@@ -24,7 +24,7 @@ services:
     image: docker.asifbacchus.dev/livereload/livereload:latest
     container_name: livereload
     volumes:
-    - ./certs:certs:ro
+    - ./certs:certs
     - ${WATCHDIR}:/watch:ro
     ports:
     - "${LR_PORT:-35729}:${LR_PORT:-35729}"
