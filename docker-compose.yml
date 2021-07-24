@@ -1,5 +1,5 @@
 #
-# LiveReload stack
+# node-livereload-tls stack
 #
 
 version: '2.4'

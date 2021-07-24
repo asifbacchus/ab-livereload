@@ -1,6 +1,6 @@
 #
-# Parameters for LiveReload stack:
-#   This file makes it easier to customize your LiveReload stack deployment by providing centralized configuration options.
+# Parameters for node-livereload-tls stack:
+#   This file makes it easier to customize your node-livereload-tls stack deployment by providing centralized configuration options.
 #   This file is *not required* since all values have (sane) default settings.
 #   There is *no* sensitive information in this file.
 
@@ -49,7 +49,7 @@
 
 
 #
-# LiveReload parameters
+# node-livereload parameters
 
 # LR_PORT:
 # Port on which the server should listen. Virtually all clients expect the default setting.

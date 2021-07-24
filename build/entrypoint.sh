@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# entrypoint script for livereload-tls-npm container
+# entrypoint script for node-livereload-tls container
 #
 
 # functions
@@ -95,7 +95,7 @@ esac
 
 # action: run server
 if [ "$doServer" -eq 1 ]; then
-    printf "Starting LiveReload server:\n"
+    printf "Starting node-livereload-tls server:\n"
 
     # https pre-flight check
     if [ "$enableHTTPS" = "true" ]; then

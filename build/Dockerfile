@@ -1,4 +1,4 @@
-# LiveReload-npm server supporting SSL/TLS
+# node-livereload server supporting SSL/TLS
 
 # allow dynamic building by specifying base image elements as build-args
 ARG NODE_VERSION=16
@@ -26,8 +26,8 @@ RUN apk --update --no-cache add \
 
 # labels
 LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
-LABEL org.opencontainers.image.title="livereload npm"
-LABEL org.opencontainers.image.description="Dockerized npm livereload supporting TLS and running under limited user account. Environment variables allow specifying files to watch/exclude and notification delay."
+LABEL org.opencontainers.image.title="node-livereload-tls"
+LABEL org.opencontainers.image.description="Dockerized node-livereload supporting TLS and running under limited user account. Environment variables allow specifying files to watch/exclude and notification delay."
 LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/livereload"
 LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/livereload/raw/branch/master/README.md"
 LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/livereload.git"
@@ -45,7 +45,7 @@ ENV LR_DEBUG=true
 ENV LR_HTTPS=true
 ENV CERT_HOSTNAME=""
 
-# install livereload npm as node user then switch back to root user
+# install node-livereload as node user then switch back to root user
 USER node
 WORKDIR /home/node
 RUN mkdir -p .npm-global/bin .npm-global/lib \
@@ -73,7 +73,7 @@ ARG INTERNAL_VERSION
 ARG BUILD_DATE
 LABEL org.opencontainers.image.version="16.5.0, 0.9.3"
 LABEL org.opencontainers.image.vendor="NODE.js, node-livereload"
-LABEL dev.asifbacchus.image.name="livereload-tls-npm"
+LABEL dev.asifbacchus.image.name="node-livereload-tls"
 LABEL dev.asifbacchus.image.version=${INTERNAL_VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
