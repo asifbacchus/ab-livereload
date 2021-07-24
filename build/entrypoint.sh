@@ -22,9 +22,19 @@ certificateGenerateNew() {
     printf "\nGenerating new self-signed certificate:\n"
     # shellcheck disable=SC3028
     if [ -z "$CERT_HOSTNAME" ]; then export CERT_HOSTNAME="$HOSTNAME"; fi
+    # create placeholder files to set permissions
+    touch /certs/fullchain.pem && chmod 664 /certs/fullchain.pem
+    touch /certs/privkey.pem && chmod 640 /certs/privkey.pem
+    # generate certificate
     if ! openssl req -new -x509 -days 365 -nodes -out /certs/fullchain.pem -keyout /certs/privkey.pem -config /etc/selfsigned.cnf; then
         printf "\nUnable to generate certificate. Is your 'certs' directory writable by this container?\n\n"
         exit 55
+    fi
+    cp /certs/fullchain.pem /certs/chain.pem
+    # generate dh-params for TLS1.2
+    if ! openssl dhparam -dsaparam -out /certs/dhparam.pem 4096; then
+        printf "\nUnable to generate dh-params. Is you 'certs' directory writable by this container?\n\n"
+        exit 56
     fi
 
     # print message to user
@@ -161,6 +171,7 @@ exit 99
 # 52:    unable to read certificate/chain
 # 53:    unable to read private key
 # 55:    unable to generate new certificate
+# 56:    unable to generate dh-params
 # 99:  code error
 
 #EOF
