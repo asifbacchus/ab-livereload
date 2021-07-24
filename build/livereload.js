@@ -1,7 +1,30 @@
 // implement node-livereload over an HTTPS connection
 
+// healthcheck function
+function healthcheck() {
+    const express = require('express');
+    const http = require('http');
+
+    const app = express();
+    const router = express.Router();
+
+    router.use((req, res, next) =>{
+        res.header('Access-Control-Allow-Methods', 'GET');
+        next();
+    });
+
+    router.get('/health', (req, res) =>{
+        res.status(200).send('Ok');
+    });
+
+    app.use('/api/v1', router);
+
+    const hServer = http.createServer(app);
+    hServer.listen(3000);
+}
+
 // load livereload module
-let livereload = require('livereload');
+const livereload = require('livereload');
 
 // set createServer options
 const fs = require('fs');
@@ -32,7 +55,7 @@ else {
 }
 
 // start server
-let server = livereload.createServer(options);
-server.watch('/watch')
+const lrServer = livereload.createServer(options, healthcheck);
+lrServer.watch('/watch')
 
 //#EOF

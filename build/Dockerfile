@@ -45,13 +45,13 @@ ENV LR_DEBUG=true
 ENV LR_HTTPS=true
 ENV CERT_HOSTNAME=""
 
-# install node-livereload as node user then switch back to root user
+# install node-livereload and express as node user then switch back to root user
 USER node
 WORKDIR /home/node
 RUN mkdir -p .npm-global/bin .npm-global/lib \
     && npm config set fund false \
     && npm config set update-notifier false \
-    && npm install livereload --save
+    && npm install livereload express --save
 
 # copy scripts and fix-up all permissions
 USER root
@@ -62,6 +62,13 @@ RUN chown node:node /home/node/livereload.js \
     && chmod 644 /home/node/livereload.js \
     && chmod 755 /usr/local/bin/entrypoint.sh \
     && chmod 644 /etc/selfsigned.cnf
+
+HEALTHCHECK \
+    --interval=10s \
+    --timeout=5s \
+    --start-period=60s \
+    --retries=3 \
+    CMD wget --spider -T 3 -q localhost:3000/api/v1/health || exit 1
 
 # switch to node user, run entrypoint script by default
 USER node
