@@ -23,7 +23,7 @@ certificateGenerateNew() {
     # shellcheck disable=SC3028
     if [ -z "$CERT_HOSTNAME" ]; then export CERT_HOSTNAME="$HOSTNAME"; fi
     # create placeholder files to set permissions
-    touch /certs/fullchain.pem && chmod 664 /certs/fullchain.pem
+    touch /certs/fullchain.pem && chmod 644 /certs/fullchain.pem
     touch /certs/privkey.pem && chmod 640 /certs/privkey.pem
     # generate certificate
     if ! openssl req -new -x509 -days 365 -nodes -out /certs/fullchain.pem -keyout /certs/privkey.pem -config /etc/selfsigned.cnf; then
