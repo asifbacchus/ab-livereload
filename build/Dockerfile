@@ -4,6 +4,8 @@
 ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.14
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+ARG NODE_VERSION
+ARG ALPINE_VERSION
 
 # create new node user with set UID and GID from build-args and create volume directories
 ARG NODE_UID=9999
@@ -27,12 +29,16 @@ RUN apk --update --no-cache add \
     && apk --update --no-cache upgrade
 
 # labels
+MAINTAINER Asif Bacchus <asif@asifbacchus.dev>
+LABEL maintainer="Asif Bacchus <asif@asifbacchus.dev>"
+LABEL dev.asifbacchus.docker.internalName="node-livereload-tls"
 LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
-LABEL org.opencontainers.image.title="node-livereload-tls"
 LABEL org.opencontainers.image.description="Dockerized node-livereload supporting TLS and running under limited user account. Environment variables allow specifying files to watch/exclude and notification delay."
-LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/livereload"
 LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/livereload/raw/branch/master/README.md"
 LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/livereload.git"
+LABEL org.opencontainers.image.title="node-livereload-tls"
+LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/livereload"
+LABEL org.opencontainers.image.vendor="NODE.js, node-livereload"
 
 # default environment variables
 ENV NODE_ENV=production
@@ -79,11 +85,11 @@ ENTRYPOINT [ "/sbin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
 
 # set build timestamp and version labels
 ARG INTERNAL_VERSION
+ARG GIT_COMMIT
 ARG BUILD_DATE
-LABEL org.opencontainers.image.version="16.5.0, 0.9.3"
-LABEL org.opencontainers.image.vendor="NODE.js, node-livereload"
-LABEL dev.asifbacchus.image.name="node-livereload-tls"
-LABEL dev.asifbacchus.image.version=${INTERNAL_VERSION}
+LABEL org.opencontainers.image.version="NODE=${NODE_VERSION}, node-livereload=0.9.3"
+LABEL dev.asifbacchus.docker.internalVersion=${INTERNAL_VERSION}
+LABEL org.opencontainers.image.revision=${GIT_COMMIT}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
