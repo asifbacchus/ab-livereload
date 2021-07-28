@@ -21,9 +21,10 @@ EXPOSE 35729
 
 # add tini, timezone support and create certificate directories
 RUN apk --update --no-cache add \
-    tini \
-    tzdata \
-    openssl
+        tini \
+        tzdata \
+        openssl \
+    && apk --update --no-cache upgrade
 
 # labels
 LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
