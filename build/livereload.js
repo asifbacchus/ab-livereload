@@ -7,12 +7,12 @@ function healthcheck() {
     const app = express();
     const router = express.Router();
 
-    router.use((req, res, next) =>{
+    router.use((req, res, next) => {
         res.header('Access-Control-Allow-Methods', 'GET');
         next();
     });
 
-    router.get('/health', (req, res) =>{
+    router.get('/health', (req, res) => {
         res.status(200).send('Ok');
     });
 
@@ -38,7 +38,7 @@ const options = {
     exts: process.env.LR_EXTS,
     exclusions: extraExclusions,
     usePolling: true,
-    delay: process.env.LR_DELAY,
+    delay: process.env.LR_DELAY
 };
 
 // set debugging output as per LR_DEBUG
