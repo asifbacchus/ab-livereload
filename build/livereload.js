@@ -1,6 +1,5 @@
-// implement node-livereload over an HTTPS connection
+// implement node-livereload over an HTTP or HTTPS connection
 
-// healthcheck function
 function healthcheck() {
     const express = require('express');
     const http = require('http');
@@ -23,15 +22,21 @@ function healthcheck() {
     hServer.listen(3000);
 }
 
-// load livereload module
+// load modules
 const livereload = require('livereload');
+const fs = require('fs');
+
+// process from environment variable as array and convert elements to RegEx objects
+const extraExclusions = process.env.LR_EXCLUDE.split(",");
+extraExclusions.forEach((exclusion, idx) => {
+    extraExclusions[idx] = new RegExp(exclusion);
+});
 
 // set createServer options
-const fs = require('fs');
 const options = {
     port: process.env.LR_PORT,
     exts: process.env.LR_EXTS,
-    exclusions: process.env.LR_EXCLUDE,
+    exclusions: extraExclusions,
     usePolling: true,
     delay: process.env.LR_DELAY,
 };
