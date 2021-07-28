@@ -53,7 +53,10 @@ All environment variables have sensible defaults and, thus, are *not* required t
 | TZ            | Set the container's time zone. NO impact on runtime, included for convenience. | Etc/UTC                                                      |
 | LR_PORT       | Port over which Livereload will communicate. All clients presently expect port 35729, so I suggest leaving this alone. | 35729                                                        |
 | LR_EXTS       | Defines monitored extensions.                                | html,xml,css,js,jsx,ts,tsx,php,py                            |
-| LR_EXCLUDE    | Array of JavaScript regular-expressions (Regex) that define paths or files to ignore. These are *appended* to the node-livereload upstream defaults which ignore everything in the `.git/`, `.svn/` and `.hg/` directories.<br />JavaScript regex format is: `/your-regex/`<br />**N.B.** At present, exclusions do not seem to be working properly. I’ve filed an issue upstream and will update the container when it’s resolved. | /\\.vscode//,/\\.idea//,/\\.tmp/,/\\.swp/                    |
+| LR_EXCLUDE    | Comma-delimited regular-expressions (Regex) that define paths or files to ignore. These are *
+appended* to the node-livereload upstream defaults which ignore everything in the `.git/`, `.svn/` and `.hg/` directories.<br />**
+N.B.** You do *
+not* have to use JavaScript format. The script will automatically convert things to JS-RegEx. You do, however, need to escape any special characters. | .vscode/,.idea/,.tmp$,.swp$/                                 |
 | LR_DELAY      | Time (ms) between polling for changed files.                 | 500                                                          |
 | LR_DEBUG      | Print informational messages to the console. Allows you to see Livereload working. | true                                                         |
 | LR_HTTPS      | Use HTTPS and WSS. In other words, use a certificate for SSL/TLS operation. | true                                                         |
@@ -102,6 +105,8 @@ docker run -d --rm -v /var/www:/watch:ro -e LR_HTTPS=false -p 35729:35729 asifba
 - `-e LR_HTTPS=false`: run in HTTP instead of default HTTPS mode
 - `-p 35729:35729`: map on all interfaces port 35729 on the host --> port 35729 in container
 - `listen`: start the Livereload server
+
+> Depending on your environment, you may *not* want to expose your Livereload server on all interfaces! You may want to map your port to something like `127.0.0.1:35729:35729` and then establishing an SSH-tunnel from your client. This is completely dependent on your environment and beyond the scope of this readme, sorry.
 
 ### Run in HTTPS mode with supplied certificate
 
