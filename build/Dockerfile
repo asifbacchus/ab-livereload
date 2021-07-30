@@ -56,11 +56,12 @@ ENV CERT_HOSTNAME=""
 # install node-livereload and express as node user then switch back to root user
 USER node
 WORKDIR /home/node
-COPY --chown=node:node [ "package.json", "package-lock.json", "ab-livereload.js", "/home/node/"]
+COPY --chown=node:node [ "package.json", "package-lock.json", "/home/node/" ]
 RUN mkdir -p .npm-global/bin .npm-global/lib \
     && npm config set fund false \
     && npm config set update-notifier false \
     && npm install --save
+COPY --chown=node:node [ "ab-livereload.js", "/home/node/"]
 
 # copy scripts and fix-up all permissions
 USER root
