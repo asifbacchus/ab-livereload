@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# entrypoint script for node-livereload-tls container
+# entrypoint script for ab-livereload container
 #
 
 # functions
@@ -105,7 +105,7 @@ esac
 
 # action: run server
 if [ "$doServer" -eq 1 ]; then
-    printf "Starting node-livereload-tls server:\n"
+    printf "Starting ab-livereload server:\n"
 
     # https pre-flight check
     if [ "$enableHTTPS" = "true" ]; then
@@ -130,7 +130,7 @@ if [ "$doServer" -eq 1 ]; then
                 ;;
         esac
     fi
-    exec node livereload.js
+    exec node ab-livereload.js
     exit "$?"
 fi
 

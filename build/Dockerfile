@@ -31,14 +31,14 @@ RUN apk --update --no-cache add \
 # labels
 MAINTAINER Asif Bacchus <asif@asifbacchus.dev>
 LABEL maintainer="Asif Bacchus <asif@asifbacchus.dev>"
-LABEL dev.asifbacchus.docker.internalName="node-livereload-tls"
+LABEL dev.asifbacchus.docker.internalName="ab-livereload"
 LABEL org.opencontainers.image.authors="Asif Bacchus <asif@asifbacchus.dev>"
 LABEL org.opencontainers.image.description="Dockerized node-livereload supporting TLS and running under limited user account. Environment variables allow specifying files to watch/exclude and notification delay."
-LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/livereload/raw/branch/master/README.md"
-LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/livereload.git"
-LABEL org.opencontainers.image.title="node-livereload-tls"
-LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/livereload"
-LABEL org.opencontainers.image.vendor="NODE.js, node-livereload"
+LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/ab-livereload/raw/branch/master/README.md"
+LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/ab-livereload.git"
+LABEL org.opencontainers.image.title="ab-livereload"
+LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/ab-livereload"
+LABEL org.opencontainers.image.vendor="Asif Bacchus <asif@asifbacchus.dev>"
 
 # default environment variables
 ENV NODE_ENV=production
@@ -56,18 +56,18 @@ ENV CERT_HOSTNAME=""
 # install node-livereload and express as node user then switch back to root user
 USER node
 WORKDIR /home/node
+COPY --chown=node:node [ "package.json", "package-lock.json", "ab-livereload.js", "/home/node/"]
 RUN mkdir -p .npm-global/bin .npm-global/lib \
     && npm config set fund false \
     && npm config set update-notifier false \
-    && npm install livereload express --save
+    && npm install --save
 
 # copy scripts and fix-up all permissions
 USER root
 COPY [ "selfsigned.cnf", "/etc/selfsigned.cnf" ]
-COPY [ "livereload.js", "/home/node/livereload.js" ]
 COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
-RUN chown node:node /home/node/livereload.js \
-    && chmod 644 /home/node/livereload.js \
+RUN chown node:node /home/node/* \
+    && chmod 644 /home/node/package* /home/node/ab-livereload.js \
     && chmod 755 /usr/local/bin/entrypoint.sh \
     && chmod 644 /etc/selfsigned.cnf
 

@@ -1,5 +1,5 @@
 #
-# node-livereload-tls stack
+# ab-livereload stack
 #
 
 version: '2.4'

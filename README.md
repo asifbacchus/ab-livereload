@@ -1,4 +1,4 @@
-# node-livereload-tls (dockerized Livereload)
+# ab-livereload (dockerized Livereload)
 
 Containerized implementation of [node-livereload](https://www.npmjs.com/package/livereload) as forked by [Brian Hogan](https://github.com/napcs) ([github repo](https://github.com/napcs/node-livereload)). This container is based on Node running on Alpine and provides for easy version-pinning and node user UID/GID changes via build args. Time zone, monitored extensions, excluded files/directories and polling delays can be set via environment variables passed at runtime. The container runs under the non-root user *'node'* over the standard livereload port *35729* for compatibility with browser addons.
 
