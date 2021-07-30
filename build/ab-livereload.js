@@ -1,55 +1,47 @@
-// implement node-livereload over an HTTP or HTTPS connection
+/*
+ Implement node-livereload over HTTP or HTTPS connection with integrated
+ health-check, signal handling and graceful socket shutdown.
+ */
 
-function healthcheck() {
-    const express = require('express');
-    const http = require('http');
-
-    const app = express();
-    const router = express.Router();
-
-    router.use((req, res, next) => {
-        res.header('Access-Control-Allow-Methods', 'GET');
-        next();
-    });
-
-    router.get('/health', (req, res) => {
-        res.status(200).send('Ok');
-    });
-
-    app.use('/api/v1', router);
-
-    const hServer = http.createServer(app);
-    hServer.listen(3000);
-}
-
-// load modules
+// load required modules
 const livereload = require('livereload');
 const fs = require('fs');
+const http = require('http');
 
-// process from environment variable as array and convert elements to RegEx objects
+// health check object
+const healthCheck = {
+    app: healthCheckApp(),
+    server: function () {
+        return http.createServer(this.app);
+    },
+    start: function () {
+        this.server().listen(3000);
+    },
+    stop: function (callback) {
+        this.server().close(callback());
+    }
+};
+
+// set LiveReload server options
 const extraExclusions = process.env.LR_EXCLUDE.split(",");
 extraExclusions.forEach((exclusion, idx) => {
     extraExclusions[idx] = new RegExp(exclusion);
 });
 
-// set createServer options
-const options = {
+// noinspection SpellCheckingInspection
+const lrOptions = {
     port: process.env.LR_PORT,
     exts: process.env.LR_EXTS,
     exclusions: extraExclusions,
     usePolling: true,
     delay: process.env.LR_DELAY
 };
-
-// set debugging output as per LR_DEBUG
-if (process.env.LR_DEBUG === "true") {
-    options.debug = true
+if (process.env.LR_DEBUG === 'true') {
+    lrOptions.debug = true;
     console.log("[Debug output ENABLED]");
 }
-
-// set HTTPS as per LR_HTTPS
-if (process.env.LR_HTTPS === "true") {
-    options.https = {
+if (process.env.LR_HTTPS === 'true') {
+    lrOptions.https = {
         cert: fs.readFileSync('/certs/fullchain.pem'),
         key: fs.readFileSync('/certs/privkey.pem')
     };
@@ -59,8 +51,50 @@ else {
     console.log("[HTTP mode]");
 }
 
-// start server
-const lrServer = livereload.createServer(options, healthcheck);
-lrServer.watch('/watch')
+// start LiveReload server
+// noinspection JSVoidFunctionReturnValueUsed
+const lrServer = livereload.createServer(lrOptions, healthCheck.start());
+lrServer.watch('/watch');
 
-//#EOF
+// graceful termination on signals
+const termSignals = {
+    'SIGHUP': 1,
+    'SIGINT': 2,
+    'SIGTERM': 15
+};
+const shutdown = async (signal, value) => {
+    console.log("shutting down...\n");
+    await lrServer.close();
+    await healthCheck.stop(() => {
+        console.log("health-check STOPPED\n");
+    });
+    console.log(`server stopped after receiving ${signal}(${value}).`);
+}
+// iterate signals and create listener for each
+Object.keys(termSignals).forEach((signal) => {
+    process.on(signal, () => {
+        console.log("\n! received signal:", signal, " !");
+        shutdown(signal, termSignals[signal]).then(() => {
+            process.exit(128 + termSignals[signal]);
+        });
+    });
+});
+
+
+//
+// functions
+
+function healthCheckApp() {
+    const express = require('express');
+    const app = express();
+    const router = express.Router();
+
+    router.use((req, res, next) => {
+        res.header('Access-Control-Allow-Methods', 'GET');
+        next();
+    });
+    router.get('/health', (req, res) => {
+        res.status(200).send('Ok');
+    });
+    return app.use('/api/v1', router);
+}
