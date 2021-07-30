@@ -82,7 +82,7 @@ HEALTHCHECK \
 # switch to node user, run entrypoint script by default
 USER node
 WORKDIR /home/node
-ENTRYPOINT [ "/sbin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
+ENTRYPOINT [ "/sbin/tini", "-e", "143", "--", "/usr/local/bin/entrypoint.sh" ]
 
 # set build timestamp and version labels
 ARG INTERNAL_VERSION
