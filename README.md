@@ -38,7 +38,7 @@ Starting with the 2.x version line, I’ve added two *very* important features:
 
 ## Private docker repository
 
-If you prefer, you can also use my private repository to download possibly newer containers. Simply change `asifbacchus/livereload:tag` to `docker.asifbacchus.dev/livereload/livereload:tag`.
+If you prefer, you can also use my private repository to download possibly newer containers. Simply change `asifbacchus/livereload:tag` to `docker.asifbacchus.dev/ab-livereload/ab-livereload:tag`.
 
 ## Source/Issues
 
