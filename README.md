@@ -2,13 +2,6 @@
 
 Containerized implementation of [node-livereload](https://www.npmjs.com/package/livereload) as forked by [Brian Hogan](https://github.com/napcs) ([github repo](https://github.com/napcs/node-livereload)). This container is based on Node running on Alpine and provides for easy version-pinning and node user UID/GID changes via build args. Time zone, monitored extensions, excluded files/directories and polling delays can be set via environment variables passed at runtime. The container runs under the non-root user *'node'* over the standard livereload port *35729* for compatibility with browser addons.
 
-**VERSION 2.x: IMPORTANT CHANGES**
-
-Starting with the 2.x version line, I’ve added two *very* important features:
-
-- SSL/TLS support with auto-generated self-signed certificates if you don’t have your own certificates
-- Healthcheck allowing for proper integration using docker-compose into a webstack
-
 **Please note:** This container only generates notifications for livereload clients. It does NOT contain a webserver! Please see [Examples](#examples) and [Docker-Compose](#docker-compose) for how to add this to your webdev-stack.
 
 ## Contents
@@ -19,19 +12,20 @@ Starting with the 2.x version line, I’ve added two *very* important features:
 - [Source/Issues](#sourceissues)
 - [Environment variables](#environment-variables)
 - [Volume mapping](#volume-mapping)
-  * [Certificate mount (HTTPS only)](#certificate-mount-https-only)
-  * [Content mount](#content-mount)
+    * [Certificate mount (HTTPS only)](#certificate-mount-https-only)
+    * [Content mount](#content-mount)
 - [Commands](#commands)
 - [Examples](#examples)
-  * [Run in HTTP (unsecured) mode](#run-in-http-unsecured-mode)
-  * [Run in HTTPS mode with supplied certificate](#run-in-https-mode-with-supplied-certificate)
-  * [Run in HTTPS mode with generated certificate](#run-in-https-mode-with-generated-certificate)
+    * [Run in HTTP (unsecured) mode](#run-in-http-unsecured-mode)
+    * [Run in HTTPS mode with supplied certificate](#run-in-https-mode-with-supplied-certificate)
+    * [Run in HTTPS mode with generated certificate](#run-in-https-mode-with-generated-certificate)
 - [Livereload client](#livereload-client)
 - [Permissions](#permissions)
-  * [Option 1: rebuild with different UID/GID](#option-1-rebuild-with-different-uidgid)
-  * [Option 2: specify runtime GID](#option-2-specify-runtime-gid)
-  * [Using Let’s Encrypt](#using-lets-encrypt)
+    * [Option 1: rebuild with different UID/GID](#option-1-rebuild-with-different-uidgid)
+    * [Option 2: specify runtime GID](#option-2-specify-runtime-gid)
+    * [Using Let’s Encrypt](#using-lets-encrypt)
 - [Docker-Compose](#docker-compose)
+- [Brief changelog](#brief-changelog)
 - [Final thoughts](#final-thoughts)
 
 <!-- tocstop -->
@@ -48,16 +42,16 @@ If you want the Dockerfile or if you want to bring an issue/request to my attent
 
 All environment variables have sensible defaults and, thus, are *not* required to be set for the container to run successfully.
 
-| variable      | description                                                  | default                                                      |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| TZ            | Set the container's time zone. NO impact on runtime, included for convenience. | Etc/UTC                                                      |
-| LR_PORT       | Port over which Livereload will communicate. All clients presently expect port 35729, so I suggest leaving this alone. | 35729                                                        |
-| LR_EXTS       | Defines monitored extensions.                                | html,xml,css,js,jsx,ts,tsx,php,py                            |
-| LR_EXCLUDE    | Comma-delimited regular-expressions (Regex) that define paths or files to ignore. These are *appended* to the node-livereload upstream defaults which ignore everything in the `.git/`, `.svn/` and `.hg/` directories.<br />**N.B.** You do *not* have to use JavaScript format. The script will automatically convert things to JS-RegEx. You do, however, need to escape any special characters. | .vscode/,.idea/,.tmp$,.swp$/                                 |
-| LR_DELAY      | Time (ms) between polling for changed files.                 | 500                                                          |
-| LR_DEBUG      | Print informational messages to the console. Allows you to see Livereload working. | true                                                         |
-| LR_HTTPS      | Use HTTPS and WSS. In other words, use a certificate for SSL/TLS operation. | true                                                         |
-| CERT_HOSTNAME | If the container needs to generate a self-signed certificate, this is the hostname it will use. | Container hostname -- this almost *never* what you really want so don’t use this default. |
+| variable      | description                                                                                                                                                                                                                                                                                                                                                                                         | default                                                                                   |
+|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| TZ            | Set the container's time zone. NO impact on runtime, included for convenience.                                                                                                                                                                                                                                                                                                                      | Etc/UTC                                                                                   |
+| LR_PORT       | Port over which Livereload will communicate. All clients presently expect port 35729, so I suggest leaving this alone.                                                                                                                                                                                                                                                                              | 35729                                                                                     |
+| LR_EXTS       | Defines monitored extensions.                                                                                                                                                                                                                                                                                                                                                                       | html,xml,css,js,jsx,ts,tsx,php,py                                                         |
+| LR_EXCLUDE    | Comma-delimited regular-expressions (Regex) that define paths or files to ignore. These are *appended* to the node-livereload upstream defaults which ignore everything in the `.git/`, `.svn/` and `.hg/` directories.<br />**N.B.** You do *not* have to use JavaScript format. The script will automatically convert things to JS-RegEx. You do, however, need to escape any special characters. | .vscode/,.idea/,.tmp$,.swp$/                                                              |
+| LR_DELAY      | Time (ms) between polling for changed files.                                                                                                                                                                                                                                                                                                                                                        | 500                                                                                       |
+| LR_DEBUG      | Print informational messages to the console. Allows you to see Livereload working.                                                                                                                                                                                                                                                                                                                  | true                                                                                      |
+| LR_HTTPS      | Use HTTPS and WSS. In other words, use a certificate for SSL/TLS operation.                                                                                                                                                                                                                                                                                                                         | true                                                                                      |
+| CERT_HOSTNAME | If the container needs to generate a self-signed certificate, this is the hostname it will use.                                                                                                                                                                                                                                                                                                     | Container hostname -- this almost *never* what you really want so don’t use this default. |
 
 ## Volume mapping
 
@@ -82,12 +76,12 @@ Obviously, this container needs something to monitor to determine whether change
 
 The container’s entrypoint script recognizes a few commands that tell it what you want to do:
 
-| command   | description                                                  |
-| --------- | ------------------------------------------------------------ |
-| listen    | Activate Livereload server using configured parameters.<br />Aliases: run \| server \| start<br />`docker run --rm ... asifbacchus/livereload listen` |
-| shell     | Start container but drop to an Ash shell. Alternatvely, if you supply a command, the container will run that command in the shell, output results and then exit.<br />`docker run -it --rm ... asifbacchus/livereload shell`<br />`docker run --rm ... asifbacchus/livereload shell ls -lAsh /certs` |
+| command   | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| listen    | Activate Livereload server using configured parameters.<br />Aliases: run \                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | server \| start<br />`docker run --rm ... asifbacchus/livereload listen` |
+| shell     | Start container but drop to an Ash shell. Alternatvely, if you supply a command, the container will run that command in the shell, output results and then exit.<br />`docker run -it --rm ... asifbacchus/livereload shell`<br />`docker run --rm ... asifbacchus/livereload shell ls -lAsh /certs`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | new-cert  | Generate a new self-signed certificate with CN=CERT_HOSTNAME and matching DNS.1 value. Certificate and private key will be stored in */certs* as *fullchain.pem* and *privkey.pem*, respectively.<br />I strongly suggest running the container with `--user "uid:gid"` where the *gid* corresponds to one matching your webserver user, for example. That way your webserver would have read access to the generated private key. More information in the [Permissions](#permissions) section.<br />For example, running `docker run --rm -u "9999:6001" -v /etc/mycerts:/certs -e CERT_HOSTNAME=sub.domain.tld asifbacchus/livereload new-cert` would generate a new certificate and key pair in the */etc/mycerts/* directory on the host. Importantly, the private key would be readable by GID 6001 which, in this example, might be your webdev programs group including your webserver and you as the web-dev. |
-| show-cert | Display the currently loaded certificate. This can be either a generated or a supplied certificate. Great way to confirm you mounted the right one!<br />`docker run --rm -v /etc/mycerts:/certs asifbacchus/livereload show-cert` |
+| show-cert | Display the currently loaded certificate. This can be either a generated or a supplied certificate. Great way to confirm you mounted the right one!<br />`docker run --rm -v /etc/mycerts:/certs asifbacchus/livereload show-cert`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ## Examples
 
@@ -143,18 +137,20 @@ There aren’t a lot of currently updated Livereload clients and/or browser addo
 If you are running in an HTTP-permissive environment then lucky you! You can run this container in HTTP mode (`LR_HTTPS=false`) and use any of the clients and addons out there. If you want to use a snippet in your code instead of a client, simply insert this in the `<head>` of your page while using Livereload during dev:
 
 ```html
+
 <script>
-  document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
-  ':35729/livereload.js?snipver=1"></' + 'script>')
+    document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+            ':35729/livereload.js?snipver=1"></' + 'script>')
 </script>
 ```
 
 If, however, you are like me and want/need to use HTTPS then things are a little different. As I said, I can’t find a single client or addon that works over HTTPS. Therefore, you *must* use a snippet in your webpage. It’s the exact same as above, just use HTTPS instead -- again inserting in the `<head>` of your page:
 
 ```html
+
 <script>
-  document.write('<script src="https://' + (location.host || 'localhost').split(':')[0] +
-  ':35729/livereload.js?snipver=1"></' + 'script>')
+    document.write('<script src="https://' + (location.host || 'localhost').split(':')[0] +
+            ':35729/livereload.js?snipver=1"></' + 'script>')
 </script>
 ```
 
@@ -231,6 +227,21 @@ docker run --rm ... -v /etc/letsencrypt/live/certname/fullchain.pem:/certs/fullc
 ## Docker-Compose
 
 Containers, like people, often get lonely and enjoy working with others. In the case of this container, it is quite useless if not paired with at least a web server. I’ve included the core of the actual set up I use for web development -- a customized NGINX container and this Livereload container all secured with a certificate so everything even in testing is working over TLS like in real life. Take a look at the *docker-compose.yml* for more details. If you’re using Let’s Encrypt certificates, read the section above and remember to mount the files individually. If you are interested in my AB-NGINX container which has several useful additions to the official container including a healthcheck, then [check out the repo](https://git.asifbacchus.dev/ab-docker/ab-nginx).
+
+## Brief changelog
+
+### Version 3.0.0
+
+- `npm` no longer present in final build, too many un-patched security vulnerabilities.
+- multi-stage build with the final image being a minimal node installation directly on the Alpine base.
+- container is now ~50% smaller due to multi-stage build :-)
+
+### Version 2.x
+
+Starting with the 2.x version line, I’ve added two *very* important features:
+
+- SSL/TLS support with auto-generated self-signed certificates if you don’t have your own certificates
+- Healthcheck allowing for proper integration using docker-compose into a webstack
 
 ## Final thoughts
 
