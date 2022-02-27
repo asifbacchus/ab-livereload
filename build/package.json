@@ -1,6 +1,6 @@
 {
   "name": "ab-livereload",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "dependencies": {
     "express": "^4.17.1",
     "livereload": "^0.9.3"

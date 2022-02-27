@@ -7,11 +7,11 @@
           <list>
             <DockerEnvVarImpl>
               <option name="name" value="INTERNAL_VERSION" />
-              <option name="value" value="2.7.1" />
+              <option name="value" value="3.0.0" />
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
               <option name="name" value="GIT_COMMIT" />
-              <option name="value" value="ef87879b60" />
+              <option name="value" value="" />
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
               <option name="name" value="BUILD_DATE" />

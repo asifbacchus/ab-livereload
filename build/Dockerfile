@@ -3,29 +3,39 @@
 # allow dynamic building by specifying base image elements as build-args
 ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.15
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} as builder
+ARG NODE_VERSION
+ARG ALPINE_VERSION
+
+# install node dependences
+WORKDIR /build
+COPY [ "package.json", "package-lock.json", "./" ]
+RUN npm ci --production
+
+# final container
+FROM alpine:${ALPINE_VERSION} as final
 ARG NODE_VERSION
 ARG ALPINE_VERSION
 
 # create new node user with set UID and GID from build-args and create volume directories
 ARG NODE_UID=9999
 ARG NODE_GID=9999
-RUN deluser --remove-home node \
-    && addgroup -g ${NODE_GID} -S node \
+RUN addgroup -g ${NODE_GID} -S node \
     && adduser -G node -S -u ${NODE_UID} node \
     && mkdir /watch /certs \
     && chown root:node /certs \
     && chmod 770 /certs
 
-# create default volumes in-case user forgets, expose default port
+# create default volumes in case user forgets, expose default port
 VOLUME [ "/watch", "/certs" ]
 EXPOSE 35729
 
-# add tini, timezone support and create certificate directories
+# add tini, timezone support, nodejs and create certificate directories
 RUN apk --update --no-cache add \
         tini \
         tzdata \
         openssl \
+        nodejs~${NODE_VERSION} \
     && apk --update --no-cache upgrade
 
 # labels
@@ -42,8 +52,6 @@ LABEL org.opencontainers.image.vendor="Asif Bacchus <asif@asifbacchus.dev>"
 
 # default environment variables
 ENV NODE_ENV=production
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH=/home/node/.npm-global/bin:$PATH
 ENV TZ="Etc/UTC"
 ENV LR_PORT=35729
 ENV LR_EXTS="html,xml,css,js,jsx,ts,tsx,php,py"
@@ -53,22 +61,14 @@ ENV LR_DEBUG=true
 ENV LR_HTTPS=true
 ENV CERT_HOSTNAME=""
 
-# install node-livereload and express as node user then switch back to root user
-USER node
+# set-up application and copy dependencies from builder
 WORKDIR /home/node
-COPY --chown=node:node [ "package.json", "package-lock.json", "/home/node/" ]
-RUN mkdir -p .npm-global/bin .npm-global/lib \
-    && npm config set fund false \
-    && npm config set update-notifier false \
-    && npm install --save
-COPY --chown=node:node [ "ab-livereload.js", "/home/node/"]
-
-# copy scripts and fix-up all permissions
-USER root
 COPY [ "selfsigned.cnf", "/etc/selfsigned.cnf" ]
 COPY [ "entrypoint.sh", "/usr/local/bin/entrypoint.sh" ]
-RUN chown node:node /home/node/* \
-    && chmod 644 /home/node/package* /home/node/ab-livereload.js \
+COPY --chown=node:node [ "ab-livereload.js", "/home/node/"]
+COPY --from=builder [ "/build/node_modules", "/home/node/node_modules" ]
+RUN chown -R node:node /home/node/* \
+    && chmod 644 /home/node/ab-livereload.js \
     && chmod 755 /usr/local/bin/entrypoint.sh \
     && chmod 644 /etc/selfsigned.cnf
 
